@@ -168,3 +168,23 @@ Some WE BUILD scenarios involve interactions between backend systems rather than
 This is particularly relevant for EBW scenarios such as supply chain credentials, Digital Product Passports, and automated B2B or B2G data exchange. In such cases, credential issuance and presentation may be initiated by backend systems while still following the interoperability patterns defined in this blueprint.
 
 Although the interaction is system-driven, the same trust framework, credential formats, and verification mechanisms apply as in user-driven wallet interactions.
+
+## Decision tree
+
+The following decision tree guides implementers to choose between EAA (including QEAA and PuB-EAA), the WE BUILD QERDS, and other enterprise IT integrations.
+
+```mermaid
+flowchart TD
+data(["Data to share"]) --> auth{{"Who must be able to authenticate it?"}}
+auth -->|"Any relying party, under EU rules"| effect{{"Which act changes the parties’ legal position?"}}
+auth -->|"A counterparty we have an agreement with"| sectoral
+effect ---->|"Issuing the data"| constitutive["EAA (constitutive)"]
+effect -->|"An earlier act, recorded elsewhere"| assert{{"What is authenticated?"}}
+effect -->|"Transmitting the data"| regulated{{"Is the exchange itself already regulated?"}}
+assert -->|"Information about the record"| evidence{{"Is the record also needed as evidence?"}}
+assert -->|"The record itself"| regulated
+evidence -->|"The attributes suffice"| derived["EAA (derived)"]
+evidence -->|"The record must stay traceable"| ref["EAA (derived) + document reference"]
+regulated -->|"No regime governs the channel"| document["QERDS (notification/submission)"]
+regulated -->|"A sectoral regime governs it"| sectoral["That regime’s channel"]
+```
